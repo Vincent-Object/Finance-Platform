@@ -540,12 +540,22 @@ const columns = computed(() => [
 }
 
 /* 确保右固定列在滚动时保持在正确位置 */
+/* 关键修复：使用 width 而不是 min-width，确保表格有足够的宽度进行横向滚动 */
 :deep(.n-data-table-base-table) {
+  width: v-bind(tableWidth + 'px') !important;
   min-width: v-bind(tableWidth + 'px');
 }
 
 :deep(.n-data-table-base-table-header),
 :deep(.n-data-table-base-table-body) {
+  width: v-bind(tableWidth + 'px') !important;
+  min-width: v-bind(tableWidth + 'px');
+}
+
+/* 确保表格内容行也有正确的宽度 */
+:deep(.n-data-table-tbody),
+:deep(.n-data-table-tr) {
+  width: v-bind(tableWidth + 'px') !important;
   min-width: v-bind(tableWidth + 'px');
 }
 
