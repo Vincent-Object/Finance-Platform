@@ -66,9 +66,13 @@ const rowKey = (rowData) => rowData.id
 
 // 计算表格总宽度
 const tableWidth = computed(() => {
-  // 计算所有列宽度的总和
+  // 计算所有列宽度的总和 - 使用 max(width, minWidth) 与 Naive UI 渲染逻辑一致
   const totalWidth = columns.value.reduce((sum, column) => {
-    return sum + (column.width || column.minWidth || 100)
+    const actualWidth = Math.max(
+      column.width || 0,
+      column.minWidth || 0
+    ) || 100
+    return sum + actualWidth
   }, 0)
   return Math.max(totalWidth, 1200) // 确保最小宽度为1200px
 })
@@ -357,7 +361,7 @@ const columns = computed(() => [
   padding: 16px;
   position: relative;
   width: 100%;
-  overflow-x: auto;
+  /* 移除外层overflow，让Naive UI内部处理滚动 */
 }
 
 /* 表格样式自定义 */
@@ -366,14 +370,12 @@ const columns = computed(() => [
   --n-td-color-hover: #f5f5f5;
   border-radius: 6px;
   width: 100%;
-  overflow: visible;
+  /* 不要设置overflow，让容器自己处理 */
 }
 
 /* 表格容器滚动优化 */
 :deep(.n-data-table-container) {
   position: relative;
-  overflow-x: auto;
-  overflow-y: auto;
   border-radius: 6px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   width: 100%;
@@ -382,8 +384,7 @@ const columns = computed(() => [
 
 /* 确保表格包装器正确滚动 */
 :deep(.n-data-table-wrapper) {
-  overflow-x: auto;
-  overflow-y: auto;
+  /* Naive UI会自动处理滚动 */
 }
 
 /* 列宽调整手柄样式 */
