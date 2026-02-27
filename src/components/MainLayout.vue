@@ -5,6 +5,7 @@
       :title="currentPageTitle"
       :description="currentPageDescription"
       @navigate="handleNavigation"
+      @logout="handleLogout"
     />
     
     <!-- 主内容区域 -->
@@ -26,7 +27,8 @@ const router = useRouter()
 const currentPageTitle = computed(() => {
   const routeMap = {
     'InvestmentDashboard': '投资看板',
-    'StockInvestments': '股票投资'
+    'StockInvestments': '股票投资',
+    'Profile': '个人中心'
   }
   return routeMap[route.name] || '投资管理平台'
 })
@@ -34,14 +36,18 @@ const currentPageTitle = computed(() => {
 const currentPageDescription = computed(() => {
   const descriptionMap = {
     'InvestmentDashboard': '查看投资组合统计和收益分析',
-    'StockInvestments': '管理您的股票投资组合，追踪投资收益'
+    'StockInvestments': '管理您的股票投资组合，追踪投资收益',
+    'Profile': '管理您的个人资料和投资偏好'
   }
   return descriptionMap[route.name] || '金融投资管理系统'
 })
 
-// 处理导航切换
 const handleNavigation = (routeName) => {
   router.push({ name: routeName })
+}
+
+const handleLogout = () => {
+  router.push('/login')
 }
 </script>
 
