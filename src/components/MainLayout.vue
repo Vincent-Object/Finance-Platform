@@ -55,10 +55,20 @@ const handleLogout = () => {
 .main-layout {
   min-height: 100vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  transition: background 0.3s ease;
+}
+
+.dark-theme .main-layout {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
 }
 
 .main-content {
   background-color: #f5f5f5;
   min-height: calc(100vh - 64px);
+  transition: background-color 0.3s ease;
+}
+
+.dark-theme .main-content {
+  background-color: #0f172a;
 }
 </style>

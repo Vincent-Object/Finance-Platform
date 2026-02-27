@@ -93,6 +93,61 @@
         </n-form>
       </n-card>
 
+      <!-- 主题设置 -->
+      <n-card title="外观设置" :bordered="false" class="profile-detail-card">
+        <div class="theme-settings">
+          <div class="setting-item">
+            <div class="setting-info">
+              <span class="setting-label">主题模式</span>
+              <span class="setting-desc">选择浅色或深色主题</span>
+            </div>
+            <div class="theme-toggle-group">
+              <n-button 
+                :type="!isDark ? 'primary' : 'default'"
+                @click="setTheme('light')"
+                size="small"
+                class="theme-button"
+              >
+                <template #icon>
+                  <span>☀️</span>
+                </template>
+                浅色
+              </n-button>
+              <n-button 
+                :type="isDark ? 'primary' : 'default'"
+                @click="setTheme('dark')"
+                size="small"
+                class="theme-button"
+              >
+                <template #icon>
+                  <span>🌙</span>
+                </template>
+                深色
+              </n-button>
+            </div>
+          </div>
+          <n-divider style="margin: 12px 0;" />
+          <div class="setting-item">
+            <div class="setting-info">
+              <span class="setting-label">快速切换</span>
+              <span class="setting-desc">使用开关快速切换主题</span>
+            </div>
+            <n-switch 
+              :value="isDark" 
+              @update:value="toggleTheme"
+              size="large"
+            >
+              <template #checked>
+                🌙
+              </template>
+              <template #unchecked>
+                ☀️
+              </template>
+            </n-switch>
+          </div>
+        </div>
+      </n-card>
+
       <!-- 投资偏好设置 -->
       <n-card title="投资偏好" :bordered="false" class="profile-detail-card">
         <template #header-extra>
@@ -194,12 +249,14 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useMessage } from 'naive-ui'
 import dayjs from 'dayjs'
+import { useTheme } from '../composables/useTheme'
 
 const PROFILE_STORAGE_KEY = 'finance_platform_profile'
 const PREFS_STORAGE_KEY = 'finance_platform_preferences'
 
 const router = useRouter()
 const message = useMessage()
+const { isDark, setTheme, toggleTheme } = useTheme()
 
 const isEditing = ref(false)
 const isEditingPrefs = ref(false)
@@ -537,6 +594,69 @@ onMounted(() => {
 .security-desc {
   font-size: 13px;
   color: #999;
+}
+
+.theme-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.setting-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+}
+
+.setting-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.setting-label {
+  font-size: 15px;
+  font-weight: 500;
+  color: #333;
+}
+
+.setting-desc {
+  font-size: 13px;
+  color: #999;
+}
+
+.theme-toggle-group {
+  display: flex;
+  gap: 8px;
+}
+
+.theme-button {
+  min-width: 80px;
+}
+
+.dark-theme .setting-label {
+  color: #e0e0e0;
+}
+
+.dark-theme .setting-desc {
+  color: #999;
+}
+
+.dark-theme .profile-page {
+  background-color: #1a1a2e;
+}
+
+.dark-theme .page-title {
+  color: #e0e0e0;
+}
+
+.dark-theme .username {
+  color: #e0e0e0;
+}
+
+.dark-theme .security-label {
+  color: #e0e0e0;
 }
 
 :deep(.n-card) {
