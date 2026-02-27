@@ -1,0 +1,65 @@
+/* 浅色主题（默认） */
+body {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* 深色主题全局样式 */
+body.dark-theme {
+  background-color: #1a1a2e;
+  color: #e0e0e0;
+}
+
+.dark-theme .n-card {
+  background-color: #1f2937 !important;
+  color: #e0e0e0 !important;
+}
+
+.dark-theme .n-card .n-card-header {
+  color: #e0e0e0 !important;
+  border-bottom-color: #374151 !important;
+}
+
+.dark-theme .n-form-item-label {
+  color: #9ca3af !important;
+}
+
+.dark-theme .n-input__input-el,
+.dark-theme .n-input__textarea-el {
+  background-color: #374151 !important;
+  color: #e0e0e0 !important;
+}
+
+.dark-theme .n-base-selection {
+  background-color: #374151 !important;
+  color: #e0e0e0 !important;
+}
+
+.dark-theme .n-data-table {
+  background-color: #1f2937 !important;
+}
+
+.dark-theme .n-data-table-th {
+  background-color: #374151 !important;
+  color: #e0e0e0 !important;
+}
+
+.dark-theme .n-data-table-td {
+  background-color: #1f2937 !important;
+  color: #e0e0e0 !important;
+  border-bottom-color: #374151 !important;
+}
+
+.dark-theme .n-data-table-tr:hover .n-data-table-td {
+  background-color: #374151 !important;
+}
+
+.dark-theme .n-divider {
+  background-color: #374151 !important;
+}
+
+/* 平滑过渡 */
+* {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}

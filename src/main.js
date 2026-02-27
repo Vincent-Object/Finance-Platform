@@ -2,13 +2,14 @@ import { createApp } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import App from './App.vue'
 import LoginPage from './components/LoginPage.vue'
+import './styles/theme.css'
 import StockInvestmentPage from './views/StockInvestmentPage.vue'
 import InvestmentDashboard from './views/InvestmentDashboard.vue'
 import ProfilePage from './views/ProfilePage.vue'
 import { 
   NButton, NInput, NCheckbox, NForm, NFormItem, NMessageProvider, NCard, NH1, NP, NText,
   NDataTable, NTag, NInputNumber, NPopconfirm, NModal, NSelect, NAutoComplete, NDatePicker,
-  NGrid, NGridItem, NSkeleton, NIcon, NDropdown, NEmpty,
+  NGrid, NGridItem, NSkeleton, NIcon, NDropdown, NEmpty, NConfigProvider, NSwitch, NDivider,
   createDiscreteApi 
 } from 'naive-ui'
 
@@ -156,5 +157,8 @@ app.component('NSkeleton', NSkeleton)
 app.component('NIcon', NIcon)
 app.component('NDropdown', NDropdown)
 app.component('NEmpty', NEmpty)
+app.component('NConfigProvider', NConfigProvider)
+app.component('NSwitch', NSwitch)
+app.component('NDivider', NDivider)
 
 app.mount('#app')

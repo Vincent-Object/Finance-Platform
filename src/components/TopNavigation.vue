@@ -140,6 +140,12 @@ const handleUserMenuSelect = (key) => {
   padding: 0 24px;
   position: relative;
   z-index: 100;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dark-theme .top-navigation {
+  background: #1f2937;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .page-title-section {
@@ -154,12 +160,22 @@ const handleUserMenuSelect = (key) => {
   font-weight: 600;
   color: #333;
   line-height: 1.2;
+  transition: color 0.3s ease;
+}
+
+.dark-theme .page-title {
+  color: #e0e0e0;
 }
 
 .page-description {
   font-size: 14px;
   color: #666;
   margin-top: 2px;
+  transition: color 0.3s ease;
+}
+
+.dark-theme .page-description {
+  color: #9ca3af;
 }
 
 .navigation-menu {
@@ -192,10 +208,19 @@ const handleUserMenuSelect = (key) => {
   color: #666;
   font-size: 16px;
   font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.dark-theme .navigation-menu .n-button {
+  color: #9ca3af;
 }
 
 .navigation-menu .n-button:hover {
   color: #1890ff;
+}
+
+.dark-theme .navigation-menu .n-button:hover {
+  color: #60a5fa;
 }
 
 /* 响应式设计 */
