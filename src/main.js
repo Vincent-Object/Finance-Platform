@@ -4,6 +4,7 @@ import App from './App.vue'
 import LoginPage from './components/LoginPage.vue'
 import StockInvestmentPage from './views/StockInvestmentPage.vue'
 import InvestmentDashboard from './views/InvestmentDashboard.vue'
+import ProfilePage from './views/ProfilePage.vue'
 import { 
   NButton, NInput, NCheckbox, NForm, NFormItem, NMessageProvider, NCard, NH1, NP, NText,
   NDataTable, NTag, NInputNumber, NPopconfirm, NModal, NSelect, NAutoComplete, NDatePicker,
@@ -38,6 +39,15 @@ const routes = [
     component: StockInvestmentPage,
     meta: {
       title: '股票投资记录',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/profile',
+    name: 'Profile',
+    component: ProfilePage,
+    meta: {
+      title: '个人中心',
       requiresAuth: true
     }
   }
