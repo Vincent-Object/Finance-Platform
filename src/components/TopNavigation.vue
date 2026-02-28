@@ -95,6 +95,12 @@ const menuOptions = ref([
     key: 'StockInvestments',
     icon: () => h('span', '📈'),
     disabled: false
+  },
+  {
+    label: '个人中心',
+    key: 'Profile',
+    icon: () => h('span', '👤'),
+    disabled: false
   }
 ])
 

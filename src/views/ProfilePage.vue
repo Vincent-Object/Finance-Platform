@@ -14,7 +14,100 @@
               <p class="login-time">上次登录：{{ formattedLoginTime }}</p>
             </div>
           </div>
+          <div class="header-stats">
+            <div class="stat-item">
+              <span class="stat-value">{{ investStats.holdingStocks }}</span>
+              <span class="stat-label">持有股票</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+              <span class="stat-value">{{ investStats.totalTransactions }}</span>
+              <span class="stat-label">交易次数</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+              <span class="stat-value" :style="{ color: investStats.totalProfitRate >= 0 ? '#52c41a' : '#ff4d4f' }">
+                {{ investStats.totalProfitRate >= 0 ? '+' : '' }}{{ investStats.totalProfitRate.toFixed(2) }}%
+              </span>
+              <span class="stat-label">总收益率</span>
+            </div>
+          </div>
         </div>
+      </n-card>
+
+      <!-- 投资概览卡片 -->
+      <n-card title="投资概览" :bordered="false" class="profile-detail-card">
+        <template #header-extra>
+          <n-button type="primary" text @click="navigateToDashboard">
+            查看详情 →
+          </n-button>
+        </template>
+        <div class="invest-overview">
+          <div class="overview-item">
+            <span class="overview-icon" style="background: #e6f7ff; color: #1890ff;">💰</span>
+            <div class="overview-info">
+              <span class="overview-label">总投资金额</span>
+              <span class="overview-value" style="color: #1890ff;">{{ formatCurrency(investStats.totalInvestment) }}</span>
+            </div>
+          </div>
+          <div class="overview-item">
+            <span class="overview-icon" style="background: #f6ffed; color: #52c41a;">📈</span>
+            <div class="overview-info">
+              <span class="overview-label">当前持仓价值</span>
+              <span class="overview-value" style="color: #52c41a;">{{ formatCurrency(investStats.totalCurrentValue) }}</span>
+            </div>
+          </div>
+          <div class="overview-item">
+            <span class="overview-icon" :style="{ background: investStats.totalUnrealizedGain >= 0 ? '#f6ffed' : '#fff2f0', color: investStats.totalUnrealizedGain >= 0 ? '#52c41a' : '#ff4d4f' }">💵</span>
+            <div class="overview-info">
+              <span class="overview-label">未实现收益</span>
+              <span class="overview-value" :style="{ color: investStats.totalUnrealizedGain >= 0 ? '#52c41a' : '#ff4d4f' }">
+                {{ investStats.totalUnrealizedGain >= 0 ? '+' : '' }}{{ formatCurrency(investStats.totalUnrealizedGain) }}
+              </span>
+            </div>
+          </div>
+          <div class="overview-item">
+            <span class="overview-icon" style="background: #f9f0ff; color: #722ed1;">📊</span>
+            <div class="overview-info">
+              <span class="overview-label">总持股数</span>
+              <span class="overview-value" style="color: #722ed1;">{{ formatNumber(investStats.totalShares) }} 股</span>
+            </div>
+          </div>
+        </div>
+      </n-card>
+
+      <!-- 最近交易记录 -->
+      <n-card title="最近交易记录" :bordered="false" class="profile-detail-card">
+        <template #header-extra>
+          <n-button type="primary" text @click="navigateToInvestments">
+            全部记录 →
+          </n-button>
+        </template>
+        <div v-if="recentRecords.length > 0" class="recent-records">
+          <div 
+            v-for="record in recentRecords" 
+            :key="record.id" 
+            class="record-item"
+          >
+            <div class="record-left">
+              <div class="record-stock">
+                <span class="stock-name">{{ record.stockName }}</span>
+                <n-tag 
+                  :type="record.investmentType === '买入' ? 'success' : 'error'" 
+                  size="small"
+                >
+                  {{ record.investmentType }}
+                </n-tag>
+              </div>
+              <span class="record-meta">{{ record.stockCode }} · {{ record.investor }} · {{ record.investmentDate }}</span>
+            </div>
+            <div class="record-right">
+              <span class="record-amount">{{ formatCurrency(record.totalAmount) }}</span>
+              <span class="record-qty">{{ record.quantity }} 股</span>
+            </div>
+          </div>
+        </div>
+        <n-empty v-else description="暂无交易记录" />
       </n-card>
 
       <!-- 个人信息编辑卡片 -->
@@ -250,6 +343,7 @@ import { useRouter } from 'vue-router'
 import { useMessage } from 'naive-ui'
 import dayjs from 'dayjs'
 import { useTheme } from '../composables/useTheme'
+import investmentService from '../services/InvestmentService'
 
 const PROFILE_STORAGE_KEY = 'finance_platform_profile'
 const PREFS_STORAGE_KEY = 'finance_platform_preferences'
@@ -257,6 +351,52 @@ const PREFS_STORAGE_KEY = 'finance_platform_preferences'
 const router = useRouter()
 const message = useMessage()
 const { isDark, setTheme, toggleTheme } = useTheme()
+
+const investStats = reactive({
+  totalInvestment: 0,
+  totalCurrentValue: 0,
+  totalUnrealizedGain: 0,
+  totalProfitRate: 0,
+  holdingStocks: 0,
+  totalShares: 0,
+  totalTransactions: 0,
+  activeInvestors: 0
+})
+
+const recentRecords = ref([])
+
+const loadInvestmentData = () => {
+  const summary = investmentService.calculateSummary()
+  Object.assign(investStats, summary)
+
+  const allRecords = investmentService.getAll()
+  recentRecords.value = allRecords
+    .sort((a, b) => new Date(b.investmentDate) - new Date(a.investmentDate))
+    .slice(0, 5)
+}
+
+const formatCurrency = (value) => {
+  if (value == null) return '¥0.00'
+  return new Intl.NumberFormat('zh-CN', {
+    style: 'currency',
+    currency: 'CNY',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(value)
+}
+
+const formatNumber = (value) => {
+  if (value == null) return '0'
+  return new Intl.NumberFormat('zh-CN').format(value)
+}
+
+const navigateToDashboard = () => {
+  router.push({ name: 'InvestmentDashboard' })
+}
+
+const navigateToInvestments = () => {
+  router.push({ name: 'StockInvestments' })
+}
 
 const isEditing = ref(false)
 const isEditingPrefs = ref(false)
@@ -485,6 +625,7 @@ onMounted(() => {
   loadAuthData()
   loadProfile()
   loadPreferences()
+  loadInvestmentData()
 })
 </script>
 
@@ -554,6 +695,149 @@ onMounted(() => {
 
 .profile-detail-card {
   border-radius: 12px;
+}
+
+.header-stats {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-left: auto;
+  padding-left: 24px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.stat-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #333;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #999;
+}
+
+.stat-divider {
+  width: 1px;
+  height: 36px;
+  background: #e8e8e8;
+}
+
+.invest-overview {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.overview-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 10px;
+  background: #fafafa;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.overview-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.overview-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.overview-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.overview-label {
+  font-size: 13px;
+  color: #999;
+}
+
+.overview-value {
+  font-size: 18px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.recent-records {
+  display: flex;
+  flex-direction: column;
+}
+
+.record-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.2s;
+}
+
+.record-item:last-child {
+  border-bottom: none;
+}
+
+.record-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.record-stock {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stock-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+}
+
+.record-meta {
+  font-size: 12px;
+  color: #999;
+}
+
+.record-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.record-amount {
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+}
+
+.record-qty {
+  font-size: 12px;
+  color: #999;
 }
 
 .edit-actions-inline {
@@ -659,6 +943,30 @@ onMounted(() => {
   color: #e0e0e0;
 }
 
+.dark-theme .stat-value {
+  color: #e0e0e0;
+}
+
+.dark-theme .stat-divider {
+  background: #374151;
+}
+
+.dark-theme .overview-item {
+  background: #1f2937;
+}
+
+.dark-theme .stock-name {
+  color: #e0e0e0;
+}
+
+.dark-theme .record-amount {
+  color: #e0e0e0;
+}
+
+.dark-theme .record-item {
+  border-bottom-color: #374151;
+}
+
 :deep(.n-card) {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
@@ -674,6 +982,17 @@ onMounted(() => {
 @media (max-width: 768px) {
   .profile-page {
     padding: 16px;
+  }
+
+  .profile-header {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .header-stats {
+    margin-left: 0;
+    padding-left: 0;
+    justify-content: center;
   }
 
   .avatar-section {
@@ -694,6 +1013,10 @@ onMounted(() => {
 
   .username {
     font-size: 18px;
+  }
+
+  .invest-overview {
+    grid-template-columns: 1fr;
   }
 
   .security-item {
