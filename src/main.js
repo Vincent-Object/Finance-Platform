@@ -6,6 +6,7 @@ import './styles/theme.css'
 import StockInvestmentPage from './views/StockInvestmentPage.vue'
 import InvestmentDashboard from './views/InvestmentDashboard.vue'
 import ProfilePage from './views/ProfilePage.vue'
+import WelcomePage from './views/WelcomePage.vue'
 import { 
   NButton, NInput, NCheckbox, NForm, NFormItem, NMessageProvider, NCard, NH1, NP, NText,
   NDataTable, NTag, NInputNumber, NPopconfirm, NModal, NSelect, NAutoComplete, NDatePicker,
@@ -17,8 +18,11 @@ import {
 const routes = [
   {
     path: '/',
-    name: 'Login',
-    component: LoginPage
+    name: 'Welcome',
+    component: WelcomePage,
+    meta: {
+      title: '欢迎'
+    }
   },
   {
     path: '/login',
@@ -118,8 +122,8 @@ router.beforeEach((to, from, next) => {
     return
   }
 
-  // 如果访问根路径且已认证，重定向到投资看板
-  if (to.path === '/' && checkAuthStatus()) {
+  // 如果访问根路径或欢迎页且已认证，重定向到投资看板
+  if ((to.path === '/' || to.name === 'Welcome') && checkAuthStatus()) {
     next({ name: 'InvestmentDashboard' })
     return
   }
