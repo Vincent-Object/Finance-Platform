@@ -7,7 +7,7 @@ import StockInvestmentPage from './views/StockInvestmentPage.vue'
 import InvestmentDashboard from './views/InvestmentDashboard.vue'
 import ProfilePage from './views/ProfilePage.vue'
 import { 
-  NButton, NInput, NCheckbox, NForm, NFormItem, NMessageProvider, NCard, NH1, NP, NText,
+  NButton, NInput, NCheckbox, NForm, NFormItem, NFormItemGi, NMessageProvider, NCard, NH1, NP, NText,
   NDataTable, NTag, NInputNumber, NPopconfirm, NModal, NSelect, NAutoComplete, NDatePicker,
   NGrid, NGridItem, NSkeleton, NIcon, NDropdown, NEmpty, NConfigProvider, NSwitch, NDivider,
   createDiscreteApi 
@@ -138,6 +138,7 @@ app.component('NInput', NInput)
 app.component('NCheckbox', NCheckbox)
 app.component('NForm', NForm)
 app.component('NFormItem', NFormItem)
+app.component('NFormItemGi', NFormItemGi)
 app.component('NMessageProvider', NMessageProvider)
 app.component('NCard', NCard)
 app.component('NH1', NH1)
